@@ -1,10 +1,32 @@
+"""
+---- COPYRIGHT ----------------------------------------------------------------
+Copyright (C) 2017-2018
+Connor Horton (Harvard University)
+
+---- LICENSE ------------------------------------------------------------------
+This file is part of GiniQC.
+
+GiniQC is free software: you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+GiniQC is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+details. 
+
+You should have received a copy of the GNU Lesser General Public License along
+with this software.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import numpy as np
 import pandas as pd
 import os, sys, cooler
 from itertools import combinations
 from collections import defaultdict
 
-from gini_zeros import normalize_matrix, gini, adjust
+from gini import normalize_matrix, gini, adjust
 
 def make_df(bedfile):
 	chroms, starts, ends = [], [], []
@@ -20,7 +42,8 @@ def make_df(bedfile):
 
 def main():
 	filelist = open(sys.argv[1], 'r')
-	bedfile = open(sys.argv[2])
+	bedfile = open(sys.argv[2], 'r')
+	outfile = open(sys.argv[3], 'w')
 	bins_df = make_df(bedfile)
 	files = []
 	for line in filelist:
@@ -47,19 +70,18 @@ def main():
 			continue
 		pair = tuple(pair)
 		try:
-			cool1 = cooler.Cooler(pair[0]+".chrom.cool")
-			cool2 = cooler.Cooler(pair[1]+".chrom.cool")
+			cool1 = cooler.Cooler(pair[0])
+			cool2 = cooler.Cooler(pair[1])
 			matrix1 = np.array(cool1.matrix(as_pixels=True, balance=False)[:])
 			matrix2 = np.array(cool2.matrix(as_pixels=True, balance=False)[:])
 		except:
 			continue
 		numreads1 = sum(matrix1[:,-1])
 		numreads2 = sum(matrix2[:,-1])
-
-		if numreads1 == 0 or numreads2 == 0:
-			continue
-
 		totalreads = numreads1 + numreads2
+
+		if numreads1 == 0 or numreads2 == 0 or totalreads < 50000:
+			continue
 
 		numtoselect = int(abs(np.random.normal(totalreads/2, totalreads/20)))
 
@@ -79,7 +101,7 @@ def main():
 			else:
 				while rand > j:
 					i += 1
-					j += matrix2[i-len(matrix1)-1,-1]
+					j += matrix2[i-len(matrix1),-1]
 				else:
 					bin1, bin2, count = matrix2[i-len(matrix1)]
 					mixed_matrix[(bin1, bin2)] += 1
@@ -99,10 +121,12 @@ def main():
 		adjustedgini[pair] = adjust(rawgini[pair], reads[pair])
 		os.unlink("temp.cool")
 
-	outfile = open("out.txt", 'w')
-	outfile.write(",".join([str(v) for v in adjustedgini.values()]))
-	outfile.close()
 
+	outfile.write("%.3f" % np.quantile(list(adjustedgini.values()),0.75))
+
+	outfile.close()
+	filelist.close()
+	bedfile.close()
 
 if __name__ == '__main__':
 	main()

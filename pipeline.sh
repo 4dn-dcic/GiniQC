@@ -96,20 +96,17 @@ case $key in
 esac
 done
 
-# if user provides a single .cool file, output statistics to single text file
-if [[ $INFILE =~ ".cool"$ ]] ; then
-	echo "running GiniQC on $FILE"
+if [[ $INFILE =~ ".cool"$ ]] ; then # if user provides a single .cool file, output statistics to single text file
+	echo ">> Running GiniQC on ${INFILE}"
 	python gini.py $INFILE $OUTFILE
-# if user provides a list of .cool files and no predetermined Gini threshold
-elif [ -z "$GINITHRESHOLD" ] ;
-	echo "determining a threshold for GiniQC"
-	python threshold.py $INFILE $CHROMS $OUTFILE > temp.out
+elif [ -z "$GINITHRESHOLD" ] ; then # if user provides a list of .cool files and no predetermined Gini threshold
+	echo ">> Determining a threshold for GiniQC"
+	python threshold.py $INFILE $CHROMS temp.out
 	GINITHRESHOLD=$(cat temp.out)
 	rm temp.out
-	echo "running GiniQC for each file in $FILE"
+	echo ">> Running GiniQC for each file in ${INFILE}"
 	python gini_wrapper.py $INFILE $OUTFILE $READSTHRESHOLD $CISTHRESHOLD $MAXABERRATION $GINITHRESHOLD
-# if user provides a list of .cool files and a Gini threshold
-else
-	echo "running GiniQC for each file in $FILE"
+else # if user provides a list of .cool files and a Gini threshold
+	echo ">> Running GiniQC for each file in ${INFILE}"
 	python gini_wrapper.py $INFILE $OUTFILE $READSTHRESHOLD $CISTHRESHOLD $MAXABERRATION $GINITHRESHOLD
 fi
