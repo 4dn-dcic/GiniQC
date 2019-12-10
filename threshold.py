@@ -1,6 +1,6 @@
 """
 ---- COPYRIGHT ----------------------------------------------------------------
-Copyright (C) 2017-2018
+Copyright (C) 2017-2019
 Connor Horton (Harvard University)
 
 ---- LICENSE ------------------------------------------------------------------
@@ -69,9 +69,15 @@ def main():
 		if pair[0] == pair[1]:
 			continue
 		pair = tuple(pair)
-		try:
+		if "/" in pair[0]:
 			cool1 = cooler.Cooler(pair[0])
 			cool2 = cooler.Cooler(pair[1])
+		else:
+			file1 = "/".join(sys.argv[1].split("/")[:-1])+"/"+pair[0]
+			cool1 = cooler.Cooler(file1)
+			file2 = "/".join(sys.argv[1].split("/")[:-1])+"/"+pair[1]
+			cool2 = cooler.Cooler(file2)
+		try:
 			matrix1 = np.array(cool1.matrix(as_pixels=True, balance=False)[:])
 			matrix2 = np.array(cool2.matrix(as_pixels=True, balance=False)[:])
 		except:

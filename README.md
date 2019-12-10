@@ -2,7 +2,7 @@
 
 #### Dependencies
 
-- Python 3
+- Python 3.6
 - Cooler (`pip install cooler`)
 - numpy (`pip install numpy`)
 - pandas (`pip install pandas`)
@@ -20,6 +20,8 @@ Usage: bash GiniQC.sh [-h] -f FILE(s) -o OUTFILE -b BEDFILE [-c CISTHRESHOLD] [-
 	-r READSTHRESHOLD 	minimum number of reads per cell (default: 10,000 reads)
 	-a MAXABERRATION 	maximum fold-change in coverage  (default: 2-fold)
 ```
+
+When you would like to run GiniQC on several files, please note that the list of files must be in the same directory as the specified files OR the list of files must specify the full path of the files.
 
 #### Sample run
 

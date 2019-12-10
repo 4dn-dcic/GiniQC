@@ -42,9 +42,15 @@ def main():
 
 	# calculate GiniQC and other metrics for each cell. Then write each to outfile
 	for line in infile:
-		file = line.strip()
+		if "/" in line:
+			file = line.strip()
+		else:
+			file = "/".join(sys.argv[1].split("/")[:-1])+"/"+line.strip()
 		cell_name = line.split(".cool")[0]
-		matrix = cooler.Cooler(file)
+		try:
+			matrix = cooler.Cooler(file)
+		except:
+			print("Files must be in cool format")
 		normalized, reads, cis_reads, trans_reads = normalize_matrix(matrix)
 		percent_cis = 100.0*cis_reads/reads
 		raw_gini = gini(normalized)
