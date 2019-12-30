@@ -23,6 +23,7 @@ with this software.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys
 import cooler
 from gini import normalize_matrix, gini, adjust, get_max_aberration
+from tqdm import tqdm
 
 OUTFILE_HEADER = "file_name\treads\t% cis\tGiniQC(raw)\tGiniQC(adj)\tMax coverage aberration\tPassed?\n"
 LINE_STRUCTURE = "%s\t%d\t%.2f\t%.3f\t%.3f\t%f\t%s\n"
@@ -41,7 +42,8 @@ def main():
 	outfile.write(LINE_STRUCTURE % ("THRESHOLD", reads_threshold, cis_threshold, 0.0, gini_threshold, max_aberration, "N/A"))
 
 	# calculate GiniQC and other metrics for each cell. Then write each to outfile
-	for line in infile:
+	lines = infile.readlines()
+	for line in tqdm(lines):
 		if "/" in line:
 			file = line.strip()
 		else:

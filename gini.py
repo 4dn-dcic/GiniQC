@@ -137,10 +137,10 @@ def normalize_matrix(cool):
 
 def main():
     matrix = cooler.Cooler(sys.argv[1]) # .cool filehandle
-    # find maximum chromosomal read count aberration
-    max_aberration = get_max_aberration(matrix)
     # first normalize matrix
     normalized, total_reads, cis_reads, trans_reads = normalize_matrix(matrix)
+    # find maximum chromosomal read count aberration
+    max_aberration = get_max_aberration(matrix)
     # then calculate gini index
     if total_reads < 1:
         print("Input matrix %s is empty" % sys.argv[1])

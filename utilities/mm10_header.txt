@@ -1,0 +1,25 @@
+## pairs format v1.0
+#sorted: chr1-chr2-pos1-pos2
+#shape: upper triangle
+#columns: readID chr1 pos1 chr2 pos2 strand1 strand2
+#chromsize: chr1 195471971
+#chromsize: chr2 182113224
+#chromsize: chr3 160039680
+#chromsize: chr4 156508116
+#chromsize: chr5 151834684
+#chromsize: chr6 149736546
+#chromsize: chr7 145441459
+#chromsize: chr8 129401213
+#chromsize: chr9 124595110
+#chromsize: chr10 130694993
+#chromsize: chr11 122082543
+#chromsize: chr12 120129022
+#chromsize: chr13 120421639
+#chromsize: chr14 124902244
+#chromsize: chr15 104043685
+#chromsize: chr16 98207768
+#chromsize: chr17 94987271
+#chromsize: chr18 90702639
+#chromsize: chr19 61431566
+#chromsize: chrX 171031299
+#chromsize: chrY 91744698

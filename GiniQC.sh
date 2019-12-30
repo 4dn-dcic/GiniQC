@@ -2,7 +2,7 @@
 
 :<<'end_long_comment'
 ---- COPYRIGHT ----------------------------------------------------------------
-Copyright (C) 2017-2018
+Copyright (C) 2017-2020
 Connor Horton (Harvard University)
 
 ---- LICENSE ------------------------------------------------------------------
@@ -24,15 +24,16 @@ end_long_comment
 
 usage() {
 	cat <<EOM
-Usage: bash GiniQC.sh [-h] -f FILE(s) -o OUTFILE -b BEDFILE [-c CISTHRESHOLD] [-g GINITHRESHOLD] [-r READSTHRESHOLD] [-a MAXABERRATION]
+Usage: bash GiniQC.sh [-h] -f FILE(s) -o OUTFILE -b BEDFILE [-c CISTHRESHOLD] [-g GINITHRESHOLD] [-r READSTHRESHOLD] [-a MAXABERRATION] [-x]
 	-h|--help				prints this message
 	-f FILE(s)			path to cooler matrix file (must end in .cool) or path to a list of files (any other extension)
-	-o OUTFILE			desired name for output files, including pairs file
+	-o OUTFILE			desired name for output files
 	-b BEDFILE			paired-end fastq files corresponding to a single cell
-	-c CISTHRESHOLD		user-defined value (default: 80% cis)
-	-g GINITHRESHOLD	minimum GiniQC value (if unspecified, our tool will suggest a threshold)
+	-c CISTHRESHOLD		minimum percent cis value per cell (default: 80)
+	-g GINITHRESHOLD	minimum GiniQC value (if not specified, our tool will suggest a threshold)
 	-r READSTHRESHOLD 	minimum number of reads per cell (default: 10,000 reads)
-	-a MAXABERRATION 	maximum fold-change in coverage  (default: 2-fold)
+	-a MAXABERRATION 	maximum fold-change in chromosomal sequencing coverage (default: 2-fold)
+	-x					when used, GiniQC threshold is determined only on cells passing cis threshold (see -c above)
 EOM
 	exit 1;
 }
@@ -44,6 +45,7 @@ fi
 CISTHRESHOLD=80
 READSTHRESHOLD=10000
 MAXABERRATION=2
+CULL_BY_CIS=false
 
 while [[ $# -gt 0 ]]
 do
@@ -89,6 +91,11 @@ case $key in
         shift
         shift
         ;;
+    -x)
+		CULL_BY_CIS=true
+		shift
+		shift
+		;;
     *)    # unknown option
     	POSITIONAL+=("$1") # save it in an array for later
     	shift # past argument
@@ -101,9 +108,11 @@ if [[ $INFILE =~ ".cool"$ ]] ; then # if user provides a single .cool file, outp
 	python gini.py $INFILE $OUTFILE
 elif [ -z "$GINITHRESHOLD" ] ; then # if user provides a list of .cool files and no predetermined Gini threshold
 	echo ">> Determining a threshold for GiniQC"
-	python threshold.py $INFILE $CHROMS temp.out
-	GINITHRESHOLD=$(cat temp.out)
-	rm temp.out
+	if [[ "$CULL_BY_CIS" == "true" ]]; then
+		GINITHRESHOLD=$(python threshold.py $INFILE $CHROMS $CISTHRESHOLD)
+	else
+		GINITHRESHOLD=$(python threshold.py $INFILE $CHROMS)
+	fi
 	echo ">> Running GiniQC for each file in ${INFILE}"
 	python gini_wrapper.py $INFILE $OUTFILE $READSTHRESHOLD $CISTHRESHOLD $MAXABERRATION $GINITHRESHOLD
 else # if user provides a list of .cool files and a Gini threshold

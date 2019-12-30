@@ -1,0 +1,4 @@
+cell1.chrom.cool
+cell2.chrom.cool
+cell3.chrom.cool
+cell4.chrom.cool
