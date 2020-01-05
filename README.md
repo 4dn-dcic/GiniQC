@@ -1,6 +1,6 @@
 # GiniQC
 
-#### Dependencies
+## Dependencies
 
 - Python 3
 - Cooler (`pip install cooler`)
@@ -9,7 +9,7 @@
 - tqdm (`pip install tqdm`)
 - for file conversion: [pairix](https://github.com/4dn-dcic/pairix)
 
-#### Usage
+## Usage
 
 ```
 Usage: bash GiniQC.sh [-h] -f FILE(s) -o OUTFILE -b BEDFILE [-c CISTHRESHOLD] [-g GINITHRESHOLD] [-r READSTHRESHOLD] [-a MAXABERRATION] [-x]
@@ -26,7 +26,7 @@ Usage: bash GiniQC.sh [-h] -f FILE(s) -o OUTFILE -b BEDFILE [-c CISTHRESHOLD] [-
 
 When you would like to run GiniQC on several files, please note that the list of files must be in the same directory as the specified files OR the list of files must specify the full path of the files.
 
-#### Sample run
+## Sample run
 
 To test the code using a single file, the user can try the following command:
 ```
@@ -38,7 +38,7 @@ To test the code using a list of files, the user can try the following command:
 bash GiniQC.sh -f test/file_list.txt -o test_output.txt -b helper_files/mm10.chroms.bed
 ```
 
-#### File format
+### File format
 
 GiniQC takes cool files as input. For the user's convenience, we provide two scripts to convert bedpe and ncc files to the cool format for compatibility with GiniQC. These can be found under the `utilities` directory in this repository. In order to use these scripts, the user will need to download [pairix](https://github.com/4dn-dcic/pairix).
 

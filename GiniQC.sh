@@ -2,7 +2,7 @@
 
 :<<'end_long_comment'
 ---- COPYRIGHT ----------------------------------------------------------------
-Copyright (C) 2017-2020
+Copyright (C) 2020
 Connor Horton (Harvard University)
 
 ---- LICENSE ------------------------------------------------------------------

@@ -1,6 +1,6 @@
 """
 ---- COPYRIGHT ----------------------------------------------------------------
-Copyright (C) 2017-2019
+Copyright (C) 2020
 Connor Horton (Harvard University)
 
 ---- LICENSE ------------------------------------------------------------------
@@ -30,7 +30,6 @@ from tqdm import tqdm
 from gini import normalize_matrix, gini, adjust
 
 def get_cools(pair):
-	pair = tuple(pair)
 	if "/" in pair[0]:
 		cool1 = cooler.Cooler(pair[0])
 		cool2 = cooler.Cooler(pair[1])
@@ -116,6 +115,7 @@ def get_threshold(combos, cull_by_cis, bedfile):
 	for pair in tqdm(combos):
 		if pair[0] == pair[1]:
 			continue
+		pair = tuple(pair)
 		cool1, cool2 = get_cools(pair)
 		try:
 			matrix1 = np.array(cool1.matrix(as_pixels=True, balance=False)[:])
@@ -138,7 +138,7 @@ def get_threshold(combos, cull_by_cis, bedfile):
 		rands.sort()
 		
 		pixel_df = fill_pixel_df(rands, matrix1, matrix2, numreads1, numreads2)
-		cooler.io.create("temp.cool", bins=bins_df, pixels=pixel_df, dtype={'bin1_id':int, 'bin2_id':int, 'count':int})
+		cooler.create_cooler("temp.cool", bins=bins_df, pixels=pixel_df, dtypes={'bin1_id':int, 'bin2_id':int, 'count':int}, ordered=True)
 		newcool = cooler.Cooler("temp.cool")
 
 		normalized, reads[pair], cis, trans = normalize_matrix(newcool)

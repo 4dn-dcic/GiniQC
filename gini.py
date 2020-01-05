@@ -1,6 +1,6 @@
 """
 ---- COPYRIGHT ----------------------------------------------------------------
-Copyright (C) 2017-2018
+Copyright (C) 2020
 Connor Horton (Harvard University)
 
 ---- LICENSE ------------------------------------------------------------------
@@ -34,7 +34,7 @@ def get_max_aberration(cool):
 
     chromsizes = {}
     for bin_ in matrix_bins:
-        chrom, start, end, weight = bin_
+        chrom, start, end = bin_[:3]
         chromsizes[chrom] = end+1
 
     chrom_counts = defaultdict(int)
@@ -53,6 +53,7 @@ def get_max_aberration(cool):
 
     max_aberration = 1
     for chrom in coverage:
+        # if chrom != 'chrY':
         if chrom > median_coverage:
             max_aberration = max(max_aberration, chrom/median_coverage)
         else:
